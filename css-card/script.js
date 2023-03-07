@@ -1,3 +1,4 @@
+// Wrapper for tiles
 
 const wrapper = document.getElementById("tiles");
 
@@ -25,10 +26,16 @@ function animateEl(el, scale, duration, elasticity) {
   }
 
 function enterEl(el, scale=0.85, duration=800, elasticity=0) {
+    if (el.classList.contains('tile') && (count === -1)) {
+        return
+    }
     animateEl(el, scale, duration, elasticity);
 }
 
 function leaveEl(el, scale=0.95, duration=600, elasticity=0) {
+    if (el.classList.contains('tile') && (count === -1)) {
+        return
+    }
     animateEl(el, scale, duration, elasticity);
 }
 
@@ -105,14 +112,28 @@ window.onresize = () => createGrid();
 
 // Card animation
 
+function waitForClick(el) {
+    anime({
+      targets: el,
+      scale: 1.25,
+      duration: 5000,
+        easing: 'cubicBezier(0.72,0,0.35,1.02)',
+      direction: "alternate",
+      loop: true
+    });
+  }
+
 let card = document.getElementById('circle');
+waitForClick(card);
 
 if (/Android|iPhone/i.test(navigator.userAgent)){
 
     card.addEventListener('touchstart', function(e) {
         animateEl(e.currentTarget, 0.75, 1000, 200);
         handleOnClick(Math.floor(((columns * rows) / 2)));
+
     });
+
     
     card.addEventListener('touchend', function(e) {
     
@@ -124,6 +145,7 @@ if (/Android|iPhone/i.test(navigator.userAgent)){
 else{
     card.addEventListener('mouseenter', function(e) {
         enterEl(e.currentTarget, 2, 2000, 1000);
+        waitForClick.pause()
     });
     card.addEventListener('mouseleave', function(e) {
         leaveEl(e.currentTarget, 1, 2000, 1000);
@@ -131,7 +153,8 @@ else{
     
     card.addEventListener('mousedown', function(e) {
         animateEl(e.currentTarget, 1, 1000, 200);
-        handleOnClick(Math.floor(((columns * rows) / 2)));
+        handleOnClick('center');
+        waitForClick.pause()
     });
     
     card.addEventListener('mouseup', function(e) {
