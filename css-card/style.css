@@ -52,3 +52,12 @@ body{
     object-fit: contain;
     image-rendering: optimizeQuality;
 }
+
+
+.counter-text{
+    position: absolute;
+    margin: 35px 40px;
+    font-family: 'Roboto', sans-serif;
+    color: white;
+    z-index: 20;
+}

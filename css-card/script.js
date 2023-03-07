@@ -1,3 +1,13 @@
+let countText = document.getElementsByClassName('counter-text')[0];
+
+const header = anime.timeline({
+    targets: '.counter-text',
+    easing: 'easeOutExpo',
+  })
+    .add({opacity: [1, 0], duration: 500, scale: 0})
+    .add({opacity: [0, 1], duration: 500, scale: 1})
+
+
 // Wrapper for tiles
 
 const wrapper = document.getElementById("tiles");
@@ -112,8 +122,7 @@ window.onresize = () => createGrid();
 
 // Card animation
 
-function waitForClick(el) {
-    anime({
+const waitForClick = (el) => anime({
       targets: el,
       scale: 1.25,
       duration: 5000,
@@ -121,9 +130,21 @@ function waitForClick(el) {
       direction: "alternate",
       loop: true
     });
-  }
 
+let hue = 0;
+function hueRotate(el, step){
+    hue = (hue + step) % 360;
+    anime({
+        targets: el,
+        filter: `hue-rotate(${hue}deg)`,
+        duration:500,
+        easing: 'cubicBezier(0.72,0,0.35,1.02)',
+      });
+}
+
+let cardClickCount = 0;
 let card = document.getElementById('circle');
+
 waitForClick(card);
 
 if (/Android|iPhone/i.test(navigator.userAgent)){
@@ -131,6 +152,13 @@ if (/Android|iPhone/i.test(navigator.userAgent)){
     card.addEventListener('touchstart', function(e) {
         animateEl(e.currentTarget, 0.75, 1000, 200);
         handleOnClick(Math.floor(((columns * rows) / 2)));
+        cardClickCount += 1;
+        countText.textContent = cardClickCount;
+        header.restart();
+        setTimeout(() => {
+            countText.textContent = `${cardClickCount}`;
+        }, 500);
+        waitForClick.pause()
 
     });
 
@@ -152,9 +180,24 @@ else{
     });
     
     card.addEventListener('mousedown', function(e) {
+
+        // animate the click to scale down
         animateEl(e.currentTarget, 1, 1000, 200);
+
+        // animate the background
         handleOnClick('center');
+
+        hueRotate(card, 30);
+        cardClickCount += 1;
+        header.restart();
+        setTimeout(() => {
+            countText.textContent = `${cardClickCount}`;
+        }, 500);
+        
+        
+    
         waitForClick.pause()
+        
     });
     
     card.addEventListener('mouseup', function(e) {
