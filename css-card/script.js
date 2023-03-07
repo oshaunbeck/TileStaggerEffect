@@ -11,9 +11,10 @@ const header = anime.timeline({
 // Wrapper for tiles
 
 const wrapper = document.getElementById("tiles");
-
 let columns = 0,
     rows = 0;
+let clicked = false;
+
 
 const colors = [
     "rgb(229, 57, 53)",
@@ -36,17 +37,21 @@ function animateEl(el, scale, duration, elasticity) {
   }
 
 function enterEl(el, scale=0.85, duration=800, elasticity=0) {
-    if (el.classList.contains('tile') && (count === -1)) {
-        return
-    }
+    if (el.classList.contains('tile') && (count === -1)) return;
+
     animateEl(el, scale, duration, elasticity);
+    anime({
+        targets: el,
+        filter: "hue-rotate(60deg)",
+        duration: 200
+    })
 }
 
 function leaveEl(el, scale=0.95, duration=600, elasticity=0) {
-    if (el.classList.contains('tile') && (count === -1)) {
-        return
-    }
+    if (el.classList.contains('tile') && (count === -1)) return;
+
     animateEl(el, scale, duration, elasticity);
+
 }
 
 let count = -1;
@@ -60,6 +65,10 @@ const handleOnClick = index => {
         bg_duration = (columns * rows) * 50;
     }
     count = count + 1;
+    clicked = true;
+    setTimeout(() => {
+        clicked = false;
+    }, 1500);
     anime({
         targets: ".tile",
         backgroundColor: colors[count % colors.length],
@@ -193,6 +202,11 @@ else{
         setTimeout(() => {
             countText.textContent = `${cardClickCount}`;
         }, 500);
+        anime({
+            targets: ".tile",
+            filter: "hue-rotate(-60deg)",
+            duration: 5000
+        })
         
         
     
